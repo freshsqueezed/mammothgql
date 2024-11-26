@@ -8,7 +8,6 @@ import {
   validate,
 } from 'graphql';
 import { InternalServerError, ValidationError } from './errors';
-
 import { formatExecutionErrors, handleValidationErrors } from './utils';
 import { executeQuery } from './query';
 import { customLandingHtml, disabledLandingPage, graphiqlHtml } from './html';
