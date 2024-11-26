@@ -1,11 +1,11 @@
-import { execute } from "graphql";
-import { InternalServerError } from "./errors";
+import { execute } from 'graphql';
+import { InternalServerError } from './errors';
 
 export async function executeQuery(
   schema: any,
   document: any,
   contextValue: any,
-  variables: any
+  variables: any,
 ) {
   try {
     return await execute({
@@ -18,7 +18,7 @@ export async function executeQuery(
     throw new InternalServerError(
       error instanceof Error
         ? error.message
-        : "Unknown error during query execution"
+        : 'Unknown error during query execution',
     );
   }
 }

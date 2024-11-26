@@ -92,8 +92,8 @@ export default function mammothGraphql<TContext>({
         process.env.NODE_ENV === 'production'
           ? 'An unexpected error occurred.'
           : error instanceof Error
-          ? error.message
-          : String(error);
+            ? error.message
+            : String(error);
 
       res.status(500).json({ errors: [new InternalServerError(message)] });
     } finally {
