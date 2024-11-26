@@ -18,7 +18,7 @@ export interface MammothOptions<TContext> {
   graphiql?: boolean;
 }
 
-export default function mammothGraphql<TContext>({
+export function mammothGraphql<TContext>({
   schema,
   context,
   graphiql = false,

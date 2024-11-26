@@ -1,7 +1,7 @@
 import request from 'supertest';
 import express, { json } from 'express';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import mammothGraphql from '..';
+import { mammothGraphql } from '../src';
 
 const testSchema = makeExecutableSchema({
   typeDefs: `#graphql
