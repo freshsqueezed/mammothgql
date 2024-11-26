@@ -5,7 +5,10 @@
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "rootDir": "src"
+    "rootDir": "src",
+    "strict": true, // Enforces stricter type checking (optional, but recommended)
+    "esModuleInterop": true, // Ensures compatibility with CommonJS modules (if needed)
+    "skipLibCheck": true // Skips type checking of all declaration files (optional, for faster builds)
   },
   "exclude": ["__tests__"],
   "include": ["src"]
