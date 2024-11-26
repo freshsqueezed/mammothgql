@@ -1,3 +1,11 @@
+## [1.0.3](https://github.com/freshsqueezed/mammothgql/compare/v1.0.2...v1.0.3) (2024-11-26)
+
+
+### Bug Fixes
+
+* add new filter function ([fa97bd2](https://github.com/freshsqueezed/mammothgql/commit/fa97bd2629343ee885d782a190f404afc181f9b9))
+* update middleware ([54609c8](https://github.com/freshsqueezed/mammothgql/commit/54609c88b32f1aa21ad695396fff5c02ef3dddf7))
+
 ## [1.0.2](https://github.com/freshsqueezed/mammothgql/compare/v1.0.1...v1.0.2) (2024-11-26)
 
 
