@@ -1,6 +1,6 @@
 {
   "name": "@freshsqueezed/mammothgql",
-  "description": "GraphQL middleware for express framework",,
+  "description": "GraphQL middleware for express framework",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "version": "1.0.0",
