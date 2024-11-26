@@ -6,12 +6,12 @@ import mammothGraphql from '..';
 const testSchema = makeExecutableSchema({
   typeDefs: `#graphql
     type Query {
-      hello: String
+      hello(s: String!): String
     }
   `,
   resolvers: {
     Query: {
-      hello: () => 'world',
+      hello: (_: never, { s }: { s: string }) => s,
     },
   },
 });
@@ -32,21 +32,23 @@ describe('mammothGraphql Middleware', () => {
     );
   });
 
-  it('should return a hello message', async () => {
+  it('should support doubly-encoded variables', async () => {
     const response = await request(app)
       .post('/graphql')
       .send({
-        query: `#graphql
-          {
-            hello
-          }
-        `,
-      });
+        query: 'query Hello($s: String!) { hello(s: $s) }',
+        variables: { s: 'normally encoded' },
+      })
+      .expect(200);
 
-    // Ensure correct response structure and values
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toHaveProperty('hello');
-    expect(response.body.data.hello).toBe('world');
+    expect(response.body.data).toEqual({
+      hello: 'normally encoded',
+    });
+  });
+
+  it('should serve the GraphiQL interface when graphiql is true', async () => {
+    const response = await request(app).get('/graphql').expect(200);
+
+    expect(response.text).toContain('<title>GraphiQL</title>');
   });
 });
