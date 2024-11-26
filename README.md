@@ -1,3 +1,5 @@
+[![@freshsqueezed/mammothgql](https://github.com/freshsqueezed/mammothgql/actions/workflows/release-package.yml/badge.svg)](https://github.com/freshsqueezed/mammothgql/actions/workflows/release-package.yml)
+
 # `@freshsqueezed/mammothgql`
 
 ## A TypeScript/JavaScript GraphQL middleware for `express`
