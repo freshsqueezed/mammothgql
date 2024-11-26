@@ -4,6 +4,7 @@
     "outDir": "lib",
     "sourceMap": true,
     "declaration": true,
+    "declarationMap": true,
     "rootDir": "src"
   },
   "exclude": ["__tests__"],
