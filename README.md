@@ -1,3 +1,3 @@
 # Mammoth GQL
 
-# The 🐝
+# The 🐝 knees
