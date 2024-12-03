@@ -11,7 +11,7 @@ Mammoth GQL enables the ability to add middleware that lets you run your GraphQL
 First, install MammothGQL Middleware, the JavaScript implementation of the core GraphQL algorithms, Express, and two common Express middleware packages:
 
 ```
-npm install @afreshsqueezed/mammothgql graphql @graphql-tools/schema express cors
+npm install @freshsqueezed/mammothgql graphql @graphql-tools/schema express cors
 ```
 
 Then, write the following to `./src/app.ts`.
