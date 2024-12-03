@@ -20,8 +20,22 @@ Then, write the following to `./src/app.ts`.
 import express, { json } from 'express';
 import cors from 'cors';
 import mammoth from '@freshsqueezed/mammothgql';
-import { ServerContext } from './types';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import schema from './graphql';
+import { ServerContext } from './types';
+
+const schema = makeExecutableSchema({
+  typeDefs: `#graphql
+    type Query {
+      hello(s: String!): String
+    }
+  `,
+  resolvers: {
+    Query: {
+      hello: (_: never, { s }: { s: string }) => s,
+    },
+  },
+});
 
 const app = express();
 
@@ -31,7 +45,6 @@ app.use(
   '/graphql',
   mammoth<ServerContext>({
     schema,
-    graphiql: true,
     context: ({ req }) => ({
       user: req.user || null,
     }),
