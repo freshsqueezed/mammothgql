@@ -32,7 +32,7 @@ describe('mammothGraphql Middleware', () => {
     );
   });
 
-  it('should support doubly-encoded variables', async () => {
+  it('should return a valid response', async () => {
     const response = await request(app)
       .post('/graphql')
       .send({
