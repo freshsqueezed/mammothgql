@@ -6,7 +6,7 @@
 
 ## Getting started: Express middleware
 
-Mammoth GQL enables the ability to add middleware that lets you run your GraphQL server as part of an app built with Express, one of the most popular web frameworks for Node.
+Mammoth GQL enables the ability to run your GraphQL middleware as part of an app built with Express, one of the most popular web frameworks for Node.
 
 First, install MammothGQL Middleware, the JavaScript implementation of the core GraphQL algorithms, Express, and two common Express middleware packages:
 
@@ -21,7 +21,6 @@ import express, { json } from 'express';
 import cors from 'cors';
 import mammoth from '@freshsqueezed/mammothgql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import schema from './graphql';
 import { ServerContext } from './types';
 
 const schema = makeExecutableSchema({
