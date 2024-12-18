@@ -1,6 +1,12 @@
 import { Request, Response } from 'express';
 
 export function graphiqlHtml(req: Request, res: Response) {
+  const protocol = req.protocol;
+  const host = req.get('host');
+  const path = req.path;
+  const fullUrl = `${protocol}://${host}${path}`;
+  const wsUrl = `${protocol === 'https' ? 'wss' : 'ws'}://${host}${path}`;
+
   res.send(`
 <!--
 // *  Copyright (c) 2024 GraphQL Contributors
@@ -73,9 +79,9 @@ export function graphiqlHtml(req: Request, res: Response) {
     <script>
       const root = ReactDOM.createRoot(document.getElementById('graphiql'));
       const fetcher = GraphiQL.createFetcher({
-        url: '${req.path}',
+        url: '${fullUrl}',
         wsClient: graphqlWs.createClient({
-          url: '${req.path}',
+          url: '${wsUrl}',
         }),
       });
       const explorerPlugin = GraphiQLPluginExplorer.explorerPlugin();
