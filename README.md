@@ -18,9 +18,9 @@ Then, write the following to `./src/app.ts`.
 
 ```ts
 import express, { json } from 'express';
-import cors from 'cors';
-import mammoth from '@freshsqueezed/mammothgql';
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import cors, { CorsRequest } from 'cors';
+import { mammothGraphql } from '@freshsqueezed/mammothgql';
+import schema from './graphql';
 import { ServerContext } from './types';
 
 const schema = makeExecutableSchema({
@@ -38,12 +38,14 @@ const schema = makeExecutableSchema({
 
 const app = express();
 
-app.use(cors());
+app.use(cors<CorsRequest>());
 app.use(json());
+
 app.use(
   '/graphql',
-  mammoth<ServerContext>({
+  mammothGraphql<ServerContext>({
     schema,
+    graphiql: true,
     context: ({ req }) => ({
       user: req.user || null,
     }),
@@ -74,4 +76,4 @@ Now run your server with:
 ts-node ./src/index.ts
 ```
 
-Open the URL it prints in a web browser. It will show GraphiQL, a web-based tool for running GraphQL operations. Try running the operation `query { hello }`!
+Open the URL it prints in a web browser. It will show GraphiQL, a web-based tool for running GraphQL operations. Try running the operation `query { hello(s: "world!") }`!
