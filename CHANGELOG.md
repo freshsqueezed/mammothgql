@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/freshsqueezed/mammothgql/compare/v1.0.3...v1.0.4) (2024-12-18)
+
+
+### Bug Fixes
+
+* **mammoth:** refactor request pipeline ([#1](https://github.com/freshsqueezed/mammothgql/issues/1)) ([781d5a3](https://github.com/freshsqueezed/mammothgql/commit/781d5a313f305416dc9c31e150fbf86738997eea))
+
 ## [1.0.3](https://github.com/freshsqueezed/mammothgql/compare/v1.0.2...v1.0.3) (2024-11-26)
 
 
