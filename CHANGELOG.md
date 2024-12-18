@@ -1,3 +1,11 @@
+## [1.0.5](https://github.com/freshsqueezed/mammothgql/compare/v1.0.4...v1.0.5) (2024-12-18)
+
+
+### Bug Fixes
+
+* **mammoth:** release updated graphiql ([2663dfe](https://github.com/freshsqueezed/mammothgql/commit/2663dfe42d4caa0c0e9fecb5f1a13a45460ae695))
+* **request:** update request pipeline ([#3](https://github.com/freshsqueezed/mammothgql/issues/3)) ([e2fe768](https://github.com/freshsqueezed/mammothgql/commit/e2fe76820d6f4fc1ba90dc17c0f3326d3a98e15d))
+
 ## [1.0.4](https://github.com/freshsqueezed/mammothgql/compare/v1.0.3...v1.0.4) (2024-12-18)
 
 
