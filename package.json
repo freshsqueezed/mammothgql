@@ -3,7 +3,7 @@
   "description": "GraphQL middleware for express framework",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "author": "Matt Gordon <matt@lemonade.tech>",
   "license": "MIT",
   "repository": {

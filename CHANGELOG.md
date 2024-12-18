@@ -1,3 +1,10 @@
+## [1.0.10](https://github.com/freshsqueezed/mammothgql/compare/v1.0.9...v1.0.10) (2024-12-18)
+
+
+### Bug Fixes
+
+* **uri:** remove extra trailing slash from path to work properly ([1113eae](https://github.com/freshsqueezed/mammothgql/commit/1113eaee7cd70236ea8621adc77da0c3254566bc))
+
 ## [1.0.9](https://github.com/freshsqueezed/mammothgql/compare/v1.0.8...v1.0.9) (2024-12-18)
 
 
