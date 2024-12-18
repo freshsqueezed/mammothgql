@@ -1,5 +1,14 @@
-export function graphiqlHtml() {
-  return `
+import { Request, Response } from 'express';
+
+export function graphiqlHtml(req: Request, res: Response) {
+  res.send(`
+<!--
+// *  Copyright (c) 2024 GraphQL Contributors
+// *  All rights reserved.
+// *
+// *  This source code is licensed under the license found in the
+// *  LICENSE file in the root directory of this source tree.
+// -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -14,42 +23,45 @@ export function graphiqlHtml() {
 
       #graphiql {
         height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      /* Spinner Styles */
-      .spinner {
-        border: 4px solid rgba(255, 255, 255, 0.3);
-        border-top: 4px solid #3498db;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
-      }
-
-      /* Spinner animation */
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
       }
     </style>
-    <!-- React and React DOM -->
-    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-
-    <!-- GraphiQL and Plugin -->
-    <script src="https://unpkg.com/graphiql/graphiql.min.js" crossorigin="anonymous"></script>
+    <!--
+      This GraphiQL example depends on Promise and fetch, which are available in
+      modern browsers, but can be "polyfilled" for older browsers.
+      GraphiQL itself depends on React DOM.
+      If you do not want to rely on a CDN, you can host these files locally or
+      include them directly in your favored resource bundler.
+    -->
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+    ></script>
+    <!--
+      These two files can be found in the npm module, however you may wish to
+      copy them directly into your environment, or perhaps include them in your
+      favored resource bundler.
+    -->
+    <script
+      src="https://unpkg.com/graphiql/graphiql.min.js"
+      type="application/javascript"
+    ></script>
     <link rel="stylesheet" href="https://unpkg.com/graphiql/graphiql.min.css" />
-    <script src="https://unpkg.com/@graphiql/plugin-explorer/dist/index.umd.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://unpkg.com/@graphiql/plugin-explorer/dist/style.css" />
+    <!--
+      These are imports for the GraphIQL Explorer plugin.
+    -->
+    <script
+      src="https://unpkg.com/@graphiql/plugin-explorer/dist/index.umd.js"
+      crossorigin
+    ></script>
 
-    <!-- GraphQL WS Client for Subscriptions -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@graphiql/plugin-explorer/dist/style.css"
+    />
     <script src="https://unpkg.com/graphql-ws@5.11.0/umd/graphql-ws.min.js"></script>
   </head>
 
@@ -59,33 +71,24 @@ export function graphiqlHtml() {
     </div>
 
     <script>
-      window.onload = () => {
-        const root = ReactDOM.createRoot(document.getElementById('graphiql'));
-        
-        // HTTP and WebSocket fetcher configuration
-        const fetcher = GraphiQL.createFetcher({
-          url: 'http://localhost:3000/graphql',
-          wsClient: graphqlWs.createClient({
-            url: 'ws://localhost:3000/graphql',
-          }),
-        });
-        
-        const explorerPlugin = GraphiQLPluginExplorer.explorerPlugin();
-        
-        // Rendering GraphiQL
-        root.render(
-          React.createElement(GraphiQL, {
-            fetcher,
-            defaultEditorToolsVisibility: true,
-            plugins: [explorerPlugin],
-          }),
-        );
-
-        // Hide the spinner once GraphiQL has loaded
-        document.querySelector('.spinner').style.display = 'none';
-      };
+      const root = ReactDOM.createRoot(document.getElementById('graphiql'));
+      const fetcher = GraphiQL.createFetcher({
+        url: '${req.path}',
+        wsClient: graphqlWs.createClient({
+          url: '${req.path}',
+        }),
+      });
+      const explorerPlugin = GraphiQLPluginExplorer.explorerPlugin();
+      root.render(
+        React.createElement(GraphiQL, {
+          fetcher,
+          defaultEditorToolsVisibility: true,
+          plugins: [explorerPlugin],
+        }),
+      );
+      document.querySelector('.spinner').style.display = 'none';
     </script>
   </body>
 </html>
-  `;
+  `);
 }
