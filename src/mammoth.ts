@@ -14,6 +14,7 @@ import type {
   DocumentNode,
   FormattedExecutionResult,
   GraphQLFormattedError,
+  ValidationRule,
 } from 'graphql';
 import { handleValidationErrors } from './utils';
 import { customLandingHtml, disabledLandingPage, graphiqlHtml } from './html';
@@ -23,7 +24,7 @@ export interface MammothOptions<TContext> {
   context: ({ req, res }: { req: Request; res: Response }) => TContext;
   pretty?: boolean;
   graphiql?: boolean;
-  validationRules: any[];
+  validationRules?: ValidationRule[];
 }
 
 export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
