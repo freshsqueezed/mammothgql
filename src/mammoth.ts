@@ -166,9 +166,9 @@ export function graphiqlHtml(req: Request, res: Response) {
   const protocol = req.protocol;
   const host = req.get('host');
   const path = req.path;
-  const fullUrl = `${protocol}://${host}${path}/graphql`;
+  const fullUrl = `${protocol}://${host}${path}graphql`;
   const wsProtocol = protocol === 'https' ? 'wss' : 'ws';
-  const wsUrl = `${wsProtocol}://${host}${path}/graphql`;
+  const wsUrl = `${wsProtocol}://${host}${path}graphql`;
 
   res.send(`<!--
 *  Copyright (c) 2021 GraphQL Contributors
