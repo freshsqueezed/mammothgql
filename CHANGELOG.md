@@ -1,3 +1,10 @@
+## [1.0.9](https://github.com/freshsqueezed/mammothgql/compare/v1.0.8...v1.0.9) (2024-12-18)
+
+
+### Bug Fixes
+
+* **graphiql:** needed for graphiql to render properly ([aa523de](https://github.com/freshsqueezed/mammothgql/commit/aa523ded1a595cd281b10fb74ed09ba5b7c4417e))
+
 ## [1.0.8](https://github.com/freshsqueezed/mammothgql/compare/v1.0.7...v1.0.8) (2024-12-18)
 
 
