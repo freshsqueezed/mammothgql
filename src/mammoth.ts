@@ -17,9 +17,9 @@ import type {
   ValidationRule,
 } from 'graphql';
 import { handleValidationErrors } from './utils';
-import { customLandingHtml, disabledLandingPage, graphiqlHtml } from './html';
+import { graphiqlHtml } from './html';
 
-export interface MammothOptions<TContext> {
+interface MammothOptions<TContext> {
   schema: GraphQLSchema;
   context: ({ req, res }: { req: Request; res: Response }) => TContext;
   pretty?: boolean;
@@ -28,10 +28,12 @@ export interface MammothOptions<TContext> {
 }
 
 export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
-  const schema = options.schema;
-  const pretty = options.pretty ?? false;
-  const validationRules = options.validationRules ?? [];
-  const showGraphiQL = options.graphiql ?? false;
+  const {
+    schema,
+    pretty = false,
+    graphiql: showGraphiQL = false,
+    validationRules = [],
+  } = options;
 
   return async (
     req: Request,
@@ -41,29 +43,31 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
     if (req.method !== 'GET' && req.method !== 'POST') {
       res
         .status(405)
-        .json(errorMessages(['GraphQL only supports GET and POST requests.']));
+        .json(
+          createErrorMessages(['GraphQL only supports GET and POST requests.']),
+        );
       return;
     }
 
     const { query, variables, operationName } = req.body;
 
-    if (query == null) {
+    if (!query) {
       if (showGraphiQL && req.method === 'GET') {
-        return graphiqlHtml(req, res);
+        graphiqlHtml(req, res);
+        return;
       }
-      res.status(400).json(errorMessages(['Must provide query string.']));
+      res.status(400).json(createErrorMessages(['Must provide query string.']));
       return;
     }
 
-    const schemaValidationErrors = validateSchema(schema);
-    if (schemaValidationErrors.length > 0) {
-      // Return 500: Internal Server Error if invalid schema.
+    const schemaErrors = validateSchema(schema);
+    if (schemaErrors.length > 0) {
       res
         .status(500)
         .json(
-          errorMessages(
+          createErrorMessages(
             ['GraphQL schema validation error.'],
-            schemaValidationErrors,
+            schemaErrors,
           ),
         );
       return;
@@ -72,121 +76,93 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
     let documentAST: DocumentNode;
     try {
       documentAST = parse(new Source(query, 'GraphQL request'));
-    } catch (syntaxError: unknown) {
-      // Return 400: Bad Request if any syntax errors errors exist.
-      if (syntaxError instanceof Error) {
-        console.error(`${syntaxError.stack || syntaxError.message}`);
-        const e = new GraphQLError(syntaxError.message, {
-          originalError: syntaxError,
-        });
-        res.status(400).json(errorMessages(['GraphQL syntax error.'], [e]));
-        return;
-      }
-      throw syntaxError;
+    } catch (error: unknown) {
+      const syntaxError =
+        error instanceof Error ? error : new Error('Unknown parsing error');
+
+      const graphQLError = new GraphQLError(syntaxError.message, {
+        originalError: syntaxError,
+      });
+
+      res
+        .status(400)
+        .json(createErrorMessages(['GraphQL syntax error.'], [graphQLError]));
+      return;
     }
 
-    // Validate AST, reporting any errors.
     const validationErrors = validate(schema, documentAST, [
       ...specifiedRules,
       ...validationRules,
     ]);
 
     if (validationErrors.length > 0) {
-      // Return 400: Bad Request if any validation errors exist.
       res
         .status(400)
-        .json(errorMessages(['GraphQL validation error.'], validationErrors));
+        .json(
+          createErrorMessages(['GraphQL validation error.'], validationErrors),
+        );
       return;
     }
 
     if (req.method === 'GET') {
-      // Determine if this GET request will perform a non-query.
       const operationAST = getOperationAST(documentAST, operationName);
-      if (operationAST && operationAST.operation !== 'query') {
-        // Otherwise, report a 405: Method Not Allowed error.
+      if (operationAST?.operation !== 'query') {
         res
           .status(405)
           .json(
-            errorMessages([
-              `Can only perform a ${operationAST.operation} operation from a POST request.`,
+            createErrorMessages([
+              `Can only perform ${operationAST?.operation} operations via POST.`,
             ]),
           );
         return;
       }
     }
 
-    let result: FormattedExecutionResult;
-
     try {
-      // Parse and validate the query
-      const source = new Source(query, 'Mammoth Request');
-      const document = parse(source);
-      const validationErrors = validate(schema, document, specifiedRules);
-
-      if (validationErrors.length > 0) {
-        return handleValidationErrors(validationErrors, res);
-      }
-
-      // Prepare context and execute the query
-
-      result = await execute({
+      const result = await execute({
         schema,
         document: documentAST,
-        contextValue: options.context({ req, res }) as TContext,
+        contextValue: options.context({ req, res }),
         variableValues: variables,
-        operationName: operationName,
+        operationName,
       });
-    } catch (contextError: unknown) {
-      if (contextError instanceof Error) {
-        console.error(`${contextError.stack || contextError.message}`);
-        const e = new GraphQLError(contextError.message, {
-          originalError: contextError,
-          nodes: documentAST,
-        });
-        // Return 400: Bad Request if any execution context errors exist.
-        res
-          .status(400)
-          .json(errorMessages(['GraphQL execution context error.'], [e]));
+
+      if (!result.data && result.errors) {
+        res.status(500).json(
+          createErrorMessages(
+            result.errors.map((e) => e.message),
+            result.errors,
+          ),
+        );
         return;
       }
-      throw contextError;
-    }
 
-    if (!result.data) {
-      if (result.errors) {
-        res
-          .status(500)
-          .json(errorMessages([result.errors.toString()], result.errors));
-        return;
-      }
-    }
-
-    if (pretty) {
-      const payload = JSON.stringify(result, null, pretty ? 2 : 0);
-      res.status(200).send(payload);
-      return;
-    } else {
-      res.json(result);
-      return;
+      const payload = pretty ? JSON.stringify(result, null, 2) : result;
+      res.status(200).json(payload);
+    } catch (error: unknown) {
+      const executionError =
+        error instanceof Error ? error : new Error('Unknown execution error');
+      const graphQLError = new GraphQLError(executionError.message, {
+        originalError: executionError,
+        nodes: documentAST,
+      });
+      res
+        .status(400)
+        .json(
+          createErrorMessages(
+            ['GraphQL execution context error.'],
+            [graphQLError],
+          ),
+        );
+    } finally {
+      next();
     }
   };
 }
 
-export const errorMessages = (
+const createErrorMessages = (
   messages: string[],
   graphqlErrors?: readonly GraphQLError[] | readonly GraphQLFormattedError[],
-) => {
-  if (graphqlErrors) {
-    return {
-      errors: graphqlErrors,
-    };
-  }
-
-  return {
-    errors: messages.map((message) => {
-      return {
-        message: message,
-      };
-    }),
-  };
-};
+) => ({
+  errors: graphqlErrors ?? messages.map((message) => ({ message })),
+});
