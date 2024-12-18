@@ -170,14 +170,13 @@ export function graphiqlHtml(req: Request, res: Response) {
   const wsProtocol = protocol === 'https' ? 'wss' : 'ws';
   const wsUrl = `${wsProtocol}://${host}${path}/graphql`;
 
-  res.send(`
-<!--
-// *  Copyright (c) 2024 GraphQL Contributors
-// *  All rights reserved.
-// *
-// *  This source code is licensed under the license found in the
-// *  LICENSE file in the root directory of this source tree.
-// -->
+  res.send(`<!--
+*  Copyright (c) 2021 GraphQL Contributors
+*  All rights reserved.
+*
+*  This source code is licensed under the license found in the
+*  LICENSE file in the root directory of this source tree.
+-->
 <!doctype html>
 <html lang="en">
   <head>
@@ -226,9 +225,9 @@ export function graphiqlHtml(req: Request, res: Response) {
     <script>
       const root = ReactDOM.createRoot(document.getElementById('graphiql'));
       const fetcher = GraphiQL.createFetcher({
-        url: '${fullUrl}',
+        url: "${fullUrl}",
         wsClient: graphqlWs.createClient({
-          url: '${wsUrl}', 
+          url: "${wsUrl}",
         }),
       });
       const explorerPlugin = GraphiQLPluginExplorer.explorerPlugin();
