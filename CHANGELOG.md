@@ -1,3 +1,10 @@
+## [1.0.8](https://github.com/freshsqueezed/mammothgql/compare/v1.0.7...v1.0.8) (2024-12-18)
+
+
+### Bug Fixes
+
+* **html:** Add correct url paths ([da0d1ad](https://github.com/freshsqueezed/mammothgql/commit/da0d1ad68790a3f8223340c9882e19281518ab50))
+
 ## [1.0.7](https://github.com/freshsqueezed/mammothgql/compare/v1.0.6...v1.0.7) (2024-12-18)
 
 
