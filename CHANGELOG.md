@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/freshsqueezed/mammothgql/compare/v1.0.6...v1.0.7) (2024-12-18)
+
+
+### Bug Fixes
+
+* **html:** Remove redundant html ([49da316](https://github.com/freshsqueezed/mammothgql/commit/49da31626f321ce6d80f3737a6263e53d57fa245))
+
 ## [1.0.5](https://github.com/freshsqueezed/mammothgql/compare/v1.0.4...v1.0.5) (2024-12-18)
 
 
