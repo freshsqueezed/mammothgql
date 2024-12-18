@@ -16,7 +16,6 @@ import type {
   GraphQLFormattedError,
   ValidationRule,
 } from 'graphql';
-import { handleValidationErrors } from './utils';
 import { graphiqlHtml } from './html';
 
 interface MammothOptions<TContext> {
@@ -79,11 +78,9 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
     } catch (error: unknown) {
       const syntaxError =
         error instanceof Error ? error : new Error('Unknown parsing error');
-
       const graphQLError = new GraphQLError(syntaxError.message, {
         originalError: syntaxError,
       });
-
       res
         .status(400)
         .json(createErrorMessages(['GraphQL syntax error.'], [graphQLError]));
@@ -94,7 +91,6 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
       ...specifiedRules,
       ...validationRules,
     ]);
-
     if (validationErrors.length > 0) {
       res
         .status(400)
@@ -119,13 +115,13 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
     }
 
     try {
-      const result = await execute({
+      const result = (await execute({
         schema,
         document: documentAST,
         contextValue: options.context({ req, res }),
         variableValues: variables,
         operationName,
-      });
+      })) as FormattedExecutionResult;
 
       if (!result.data && result.errors) {
         res.status(500).json(
