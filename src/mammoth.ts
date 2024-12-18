@@ -166,9 +166,9 @@ export function graphiqlHtml(req: Request, res: Response) {
   const protocol = req.protocol;
   const host = req.get('host');
   const path = req.path;
-  const fullUrl = `${protocol}://${host}${path}`;
+  const fullUrl = `${protocol}://${host}${path}/graphql`;
   const wsProtocol = protocol === 'https' ? 'wss' : 'ws';
-  const wsUrl = `${wsProtocol}://${host}${path}`;
+  const wsUrl = `${wsProtocol}://${host}${path}/graphql`;
 
   res.send(`
 <!--
@@ -226,9 +226,9 @@ export function graphiqlHtml(req: Request, res: Response) {
     <script>
       const root = ReactDOM.createRoot(document.getElementById('graphiql'));
       const fetcher = GraphiQL.createFetcher({
-        url: ${fullUrl},
+        url: '${fullUrl}',
         wsClient: graphqlWs.createClient({
-          url: ${wsUrl}, 
+          url: '${wsUrl}', 
         }),
       });
       const explorerPlugin = GraphiQLPluginExplorer.explorerPlugin();
