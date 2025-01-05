@@ -49,9 +49,11 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
 
     const { query, variables, operationName } = req.body;
 
+    const cookies = req.headers.cookie || '';
+
     if (!query) {
       if (showGraphiQL && req.method === 'GET') {
-        graphiqlHtml(req, res);
+        graphiqlHtml(req, res, cookies);
         return;
       }
       res.status(400).json(createErrorMessages(['Must provide query string.']));
@@ -162,7 +164,7 @@ const createErrorMessages = (
   errors: graphqlErrors ?? messages.map((message) => ({ message })),
 });
 
-export function graphiqlHtml(req: Request, res: Response) {
+export function graphiqlHtml(req: Request, res: Response, cookies: string) {
   const protocol = req.protocol;
   const host = req.get('host');
   const path = req.path;
@@ -229,6 +231,17 @@ export function graphiqlHtml(req: Request, res: Response) {
         wsClient: graphqlWs.createClient({
           url: "${wsUrl}",
         }),
+        fetch: (url, options) => {
+          options = {
+            ...options,
+            credentials: 'same-origin', // Ensure cookies are included for same-origin requests
+            headers: {
+              ...options.headers,
+              'Cookie': '${cookies}', // Send cookies to the server with the request
+            },
+          };
+          return fetch(url, options);
+        },
       });
       const explorerPlugin = GraphiQLPluginExplorer.explorerPlugin();
       
