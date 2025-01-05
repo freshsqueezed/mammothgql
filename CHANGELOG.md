@@ -1,3 +1,10 @@
+## [1.0.11](https://github.com/freshsqueezed/mammothgql/compare/v1.0.10...v1.0.11) (2025-01-05)
+
+
+### Bug Fixes
+
+* **graphiql:** update graphiql to use cookies ([b94bb44](https://github.com/freshsqueezed/mammothgql/commit/b94bb447dbf98013083b92ff05c912d4fe83af11))
+
 ## [1.0.10](https://github.com/freshsqueezed/mammothgql/compare/v1.0.9...v1.0.10) (2024-12-18)
 
 
