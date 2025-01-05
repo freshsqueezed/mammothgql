@@ -1,3 +1,10 @@
+## [1.0.12](https://github.com/freshsqueezed/mammothgql/compare/v1.0.11...v1.0.12) (2025-01-05)
+
+
+### Bug Fixes
+
+* **pipeline:** include most ([20b3331](https://github.com/freshsqueezed/mammothgql/commit/20b333186b6a9eec24bec26da9958d2b4aff4abf))
+
 ## [1.0.11](https://github.com/freshsqueezed/mammothgql/compare/v1.0.10...v1.0.11) (2025-01-05)
 
 
