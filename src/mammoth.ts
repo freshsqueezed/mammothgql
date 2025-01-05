@@ -234,7 +234,7 @@ export function graphiqlHtml(req: Request, res: Response, cookies: string) {
         fetch: (url, options) => {
           options = {
             ...options,
-            credentials: 'same-origin', // Ensure cookies are included for same-origin requests
+            credentials: 'include', // Ensure cookies are included for same-origin requests
             headers: {
               ...options.headers,
               'Cookie': '${cookies}', // Send cookies to the server with the request
