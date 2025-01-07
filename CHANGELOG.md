@@ -1,3 +1,11 @@
+## [1.0.14](https://github.com/freshsqueezed/mammothgql/compare/v1.0.13...v1.0.14) (2025-01-07)
+
+
+### Bug Fixes
+
+* **ci:** fix failing ci tests for release ([b0e6b88](https://github.com/freshsqueezed/mammothgql/commit/b0e6b88a74ea1f3169b86f46260eec42caa12ef2))
+* **mammoth:** update generics so properly typed context comes through ([aebebe9](https://github.com/freshsqueezed/mammothgql/commit/aebebe95db59b3a567dd41137c8e6576fc6b6dc7))
+
 ## [1.0.13](https://github.com/freshsqueezed/mammothgql/compare/v1.0.12...v1.0.13) (2025-01-07)
 
 
