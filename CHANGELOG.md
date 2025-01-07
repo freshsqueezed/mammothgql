@@ -1,3 +1,10 @@
+## [1.0.16](https://github.com/freshsqueezed/mammothgql/compare/v1.0.15...v1.0.16) (2025-01-07)
+
+
+### Bug Fixes
+
+* **pipeline:** fix pipeline context issues ([0ec8b96](https://github.com/freshsqueezed/mammothgql/commit/0ec8b968df6cc75e4be432f32eb407872787f342))
+
 ## [1.0.15](https://github.com/freshsqueezed/mammothgql/compare/v1.0.14...v1.0.15) (2025-01-07)
 
 
