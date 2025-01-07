@@ -27,7 +27,7 @@ describe('mammothGraphql Middleware', () => {
       mammothGraphql({
         schema: testSchema,
         graphiql: true,
-        context: () => ({}),
+        context: ({ req, res }) => ({ req, res }),
       }),
     );
   });

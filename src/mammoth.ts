@@ -25,7 +25,7 @@ interface MammothOptions<TContext extends MammothContext> {
   validationRules?: ValidationRule[];
 }
 
-interface MammothContext {
+export interface MammothContext {
   req: Request;
   res: Response;
 }
