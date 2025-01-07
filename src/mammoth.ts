@@ -225,6 +225,8 @@ export function graphiqlHtml(req: Request, res: Response, cookies: string) {
       crossorigin
     ></script>
 
+     <script src="https://unpkg.com/graphql-ws@5.11.0/umd/graphql-ws.min.js"></script>
+
     <link
       rel="stylesheet"
       href="https://unpkg.com/@graphiql/plugin-explorer/dist/style.css"
