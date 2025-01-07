@@ -179,7 +179,7 @@ export function graphiqlHtml(req: Request, res: Response, cookies: string) {
 <!doctype html>
 <html lang="en">
   <head>
-    <title>GraphiQL</title>
+    <title>Mammoth GraphiQL</title>
     <style>
       body {
         height: 100%;

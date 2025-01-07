@@ -19,10 +19,6 @@ export type IterableResolverFn<TSource = any, TArgs = any, TContext = any> = (
   info: any,
 ) => AsyncIterableIterator<any> | Promise<AsyncIterableIterator<any>>;
 
-interface IterallAsyncIterator<T> extends AsyncIterableIterator<T> {
-  [Symbol.asyncIterator](): IterallAsyncIterator<T>;
-}
-
 export type WithFilter<TSource = any, TArgs = any, TContext = any> = (
   asyncIteratorFn: ResolverFn<TSource, TArgs, TContext>,
   filterFn: FilterFn<TSource, TArgs, TContext>,
@@ -33,48 +29,31 @@ export function withFilter<TSource = any, TArgs = any, TContext = any>(
   filterFn: FilterFn<TSource, TArgs, TContext>,
 ): IterableResolverFn<TSource, TArgs, TContext> {
   return async (
-    rootValue: TSource,
-    args: TArgs,
-    context: TContext,
-    info: any,
-  ): Promise<IterallAsyncIterator<any>> => {
+    rootValue,
+    args,
+    context,
+    info,
+  ): Promise<AsyncIterableIterator<any>> => {
     const asyncIterator = await asyncIteratorFn(rootValue, args, context, info);
 
-    const getNextPromise = () => {
-      return new Promise<IteratorResult<any>>((resolve, reject) => {
-        const inner = () => {
-          asyncIterator
-            .next()
-            .then((payload) => {
-              if (payload.done === true) {
-                resolve(payload);
-                return;
-              }
-              Promise.resolve(filterFn(payload.value, args, context, info))
-                .catch(() => false) // We ignore errors from filter function
-                .then((filterResult) => {
-                  if (filterResult === true) {
-                    resolve(payload);
-                    return;
-                  }
-                  // Skip the current value and wait for the next one
-                  inner();
-                });
-            })
-            .catch((err) => {
-              reject(err);
-            });
-        };
+    const next = async (): Promise<IteratorResult<any>> => {
+      const payload = await asyncIterator.next();
+      if (payload.done) return payload;
 
-        inner();
-      });
+      const filterResult = await filterFn(payload.value, args, context, info);
+      if (filterResult) {
+        return payload;
+      }
+
+      // Recursively skip and try again with the next item
+      return next();
     };
 
-    const asyncIterator2: IterallAsyncIterator<any> = {
-      next() {
-        return getNextPromise();
-      },
+    // Return the AsyncIterableIterator directly, wrapping in Promise.resolve() when done
+    const iterable: AsyncIterableIterator<any> = {
+      next,
       return() {
+        // Ensure return is always a Promise of IteratorResult
         return asyncIterator.return
           ? asyncIterator.return()
           : Promise.resolve({ done: true, value: undefined });
@@ -89,6 +68,6 @@ export function withFilter<TSource = any, TArgs = any, TContext = any>(
       },
     };
 
-    return asyncIterator2;
+    return iterable;
   };
 }
