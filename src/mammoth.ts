@@ -17,27 +17,29 @@ import type {
   GraphQLFormattedError,
 } from 'graphql';
 
-interface MammothOptions<TContext extends MammothContext> {
+interface MammothBaseContext {
+  req: Request;
+  res: Response;
+}
+
+// MammothOptions is now generic, expecting a ServerContext that extends MammothBaseContext
+interface MammothOptions<ServerContext extends MammothBaseContext> {
   schema: GraphQLSchema;
-  context: ({ req, res }: { req: Request; res: Response }) => TContext;
+  context?: (args: MammothBaseContext) => Partial<ServerContext>;
   pretty?: boolean;
   graphiql?: boolean;
   validationRules?: ValidationRule[];
 }
 
-export interface MammothContext {
-  req: Request;
-  res: Response;
-}
-
-export function mammothGraphql<TContext extends MammothContext>(
-  options: MammothOptions<TContext>,
+export function mammothGraphql<ServerContext extends MammothBaseContext>(
+  options: MammothOptions<ServerContext>,
 ) {
   const {
     schema,
     pretty = false,
     graphiql: showGraphiQL = false,
     validationRules = [],
+    context = () => ({}),
   } = options;
 
   return async (req: Request, res: Response): Promise<void> => {
@@ -51,7 +53,6 @@ export function mammothGraphql<TContext extends MammothContext>(
     }
 
     const { query, variables, operationName } = req.body;
-
     const cookies = req.headers.cookie || '';
 
     if (!query) {
@@ -119,57 +120,56 @@ export function mammothGraphql<TContext extends MammothContext>(
     }
 
     try {
-      const result = (await execute({
+      const contextValue: ServerContext = {
+        req,
+        res,
+        ...context({ req, res }),
+      } as ServerContext;
+
+      const result = await execute({
         schema,
         document: documentAST,
-        contextValue: options.context({ req, res }),
+        contextValue,
         variableValues: variables,
         operationName,
-      })) as FormattedExecutionResult;
+      });
 
-      if (result.errors && result.errors.length > 0) {
-        // If there are errors, handle them properly
-        res.status(500).json(
+      if (result.errors) {
+        res.status(400).json(
           createErrorMessages(
-            result.errors.map((e) => e.message),
+            result.errors.map((err) => err.message),
             result.errors,
           ),
         );
         return;
       }
 
-      const payload = pretty ? JSON.stringify(result, null, 2) : result;
-
-      res.status(200).json(payload);
-    } catch (error: unknown) {
+      res.status(200).json(pretty ? JSON.stringify(result, null, 2) : result);
+    } catch (err: unknown) {
       const executionError =
-        error instanceof Error ? error : new Error('Unknown execution error');
-      const graphQLError = new GraphQLError(executionError.message, {
-        originalError: executionError,
-      });
-      res
-        .status(500)
-        .json(
-          createErrorMessages(['GraphQL execution error.'], [graphQLError]),
-        );
+        err instanceof Error ? err : new Error('Unknown execution error');
+      res.status(500).json(createErrorMessages([executionError.message]));
     }
   };
 }
 
-const createErrorMessages = (
+function createErrorMessages(
   messages: string[],
-  graphqlErrors?: readonly GraphQLError[] | readonly GraphQLFormattedError[],
-) => ({
-  errors: graphqlErrors ?? messages.map((message) => ({ message })),
-});
+  errors?: ReadonlyArray<GraphQLFormattedError>,
+): FormattedExecutionResult {
+  return {
+    data: null,
+    errors: errors || messages.map((msg) => ({ message: msg })),
+  };
+}
 
 export function graphiqlHtml(req: Request, res: Response, cookies: string) {
   const protocol = req.protocol;
   const host = req.get('host');
   const path = req.path;
-  const fullUrl = `${protocol}://${host}${path}graphql`;
+  const fullUrl = `${protocol}://${host}${path}`;
   const wsProtocol = protocol === 'https' ? 'wss' : 'ws';
-  const wsUrl = `${wsProtocol}://${host}${path}graphql`;
+  const wsUrl = `${wsProtocol}://${host}${path}`;
 
   res.send(`<!--
 *  Copyright (c) 2021 GraphQL Contributors
@@ -192,6 +192,16 @@ export function graphiqlHtml(req: Request, res: Response, cookies: string) {
 
       #graphiql {
         height: 100vh;
+      }
+
+      .spinner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100vw;
+        font-size: 24px;
+        color: #333;
       }
     </style>
     <script
@@ -220,11 +230,12 @@ export function graphiqlHtml(req: Request, res: Response, cookies: string) {
 
   <body>
     <div id="graphiql">
-      <div class="spinner"></div> <!-- Spinner element -->
+      <div class="spinner">Loading GraphiQL...</div>
     </div>
 
     <script>
       const root = ReactDOM.createRoot(document.getElementById('graphiql'));
+
       const fetcher = GraphiQL.createFetcher({
         url: "${fullUrl}",
         wsClient: graphqlWs.createClient({
@@ -233,15 +244,16 @@ export function graphiqlHtml(req: Request, res: Response, cookies: string) {
         fetch: (url, options) => {
           options = {
             ...options,
-            credentials: 'include', // Ensure cookies are included for same-origin requests
+            credentials: 'include', // Include cookies for same-origin requests
             headers: {
               ...options.headers,
-              'Cookie': '${cookies}', // Send cookies to the server with the request
+              'Cookie': \`${cookies}\`, // Inject cookies into the headers
             },
           };
           return fetch(url, options);
         },
       });
+
       const explorerPlugin = GraphiQLPluginExplorer.explorerPlugin();
       
       root.render(
@@ -251,6 +263,8 @@ export function graphiqlHtml(req: Request, res: Response, cookies: string) {
           plugins: [explorerPlugin],
         })
       );
+
+      // Hide the spinner once GraphiQL is rendered
       document.querySelector('.spinner').style.display = 'none';
     </script>
   </body>
