@@ -1,3 +1,10 @@
+## [1.0.17](https://github.com/freshsqueezed/mammothgql/compare/v1.0.16...v1.0.17) (2025-01-07)
+
+
+### Bug Fixes
+
+* **graphiql:** fix broken graphiql interface ([ebd238c](https://github.com/freshsqueezed/mammothgql/commit/ebd238cc26de7a1bb2e3745da50762dceff022d6))
+
 ## [1.0.16](https://github.com/freshsqueezed/mammothgql/compare/v1.0.15...v1.0.16) (2025-01-07)
 
 
