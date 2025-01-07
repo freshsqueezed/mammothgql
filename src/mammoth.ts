@@ -13,8 +13,8 @@ import type {
   GraphQLSchema,
   DocumentNode,
   FormattedExecutionResult,
-  GraphQLFormattedError,
   ValidationRule,
+  GraphQLFormattedError,
 } from 'graphql';
 
 interface MammothOptions<TContext> {
@@ -33,11 +33,7 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
     validationRules = [],
   } = options;
 
-  return async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  return async (req: Request, res: Response): Promise<void> => {
     if (req.method !== 'GET' && req.method !== 'POST') {
       res
         .status(405)
@@ -119,12 +115,17 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
       const result = (await execute({
         schema,
         document: documentAST,
-        contextValue: options.context({ req, res }),
+        contextValue: {
+          req,
+          res,
+          ...options.context({ req, res }),
+        },
         variableValues: variables,
         operationName,
       })) as FormattedExecutionResult;
 
-      if (!result.data && result.errors) {
+      if (result.errors && result.errors.length > 0) {
+        // If there are errors, handle them properly
         res.status(500).json(
           createErrorMessages(
             result.errors.map((e) => e.message),
@@ -141,18 +142,12 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
         error instanceof Error ? error : new Error('Unknown execution error');
       const graphQLError = new GraphQLError(executionError.message, {
         originalError: executionError,
-        nodes: documentAST,
       });
       res
-        .status(400)
+        .status(500)
         .json(
-          createErrorMessages(
-            ['GraphQL execution context error.'],
-            [graphQLError],
-          ),
+          createErrorMessages(['GraphQL execution error.'], [graphQLError]),
         );
-    } finally {
-      next();
     }
   };
 }
