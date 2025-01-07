@@ -1,3 +1,10 @@
+## [1.0.23](https://github.com/freshsqueezed/mammothgql/compare/v1.0.22...v1.0.23) (2025-01-07)
+
+
+### Bug Fixes
+
+* **subscription-filter:** add proper typings must release ([3e66d91](https://github.com/freshsqueezed/mammothgql/commit/3e66d91cb45439dac6573d14e953d5d9e31fe999))
+
 ## [1.0.22](https://github.com/freshsqueezed/mammothgql/compare/v1.0.21...v1.0.22) (2025-01-07)
 
 
