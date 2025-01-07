@@ -54,6 +54,6 @@ describe('mammothGraphql Middleware', () => {
   it('should serve the GraphiQL interface when graphiql is true', async () => {
     const response = await request(app).get('/graphql').expect(200);
 
-    expect(response.text).toContain('<title>GraphiQL</title>');
+    expect(response.text).toContain('<title>Mammoth GraphiQL</title>');
   });
 });
