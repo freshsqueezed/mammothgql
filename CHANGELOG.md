@@ -1,3 +1,10 @@
+## [1.0.15](https://github.com/freshsqueezed/mammothgql/compare/v1.0.14...v1.0.15) (2025-01-07)
+
+
+### Bug Fixes
+
+* **mammoth:** Extend context properly, Partial options ([8bcd6d4](https://github.com/freshsqueezed/mammothgql/commit/8bcd6d47b07731aee73c27af80eda9cc2382693c))
+
 ## [1.0.14](https://github.com/freshsqueezed/mammothgql/compare/v1.0.13...v1.0.14) (2025-01-07)
 
 
