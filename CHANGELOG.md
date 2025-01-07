@@ -1,3 +1,11 @@
+## [1.0.21](https://github.com/freshsqueezed/mammothgql/compare/v1.0.20...v1.0.21) (2025-01-07)
+
+
+### Bug Fixes
+
+* **graphiql:** references must deploy ([a794920](https://github.com/freshsqueezed/mammothgql/commit/a7949209f1e335f3b56923a8591c0b2e2a3a116a))
+* **ws-pipeline:** update withFilter, update graphiql ([52bf362](https://github.com/freshsqueezed/mammothgql/commit/52bf362e79cf35b989eccd0125fd2e0615656639))
+
 ## [1.0.20](https://github.com/freshsqueezed/mammothgql/compare/v1.0.19...v1.0.20) (2025-01-07)
 
 
