@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import {
   execute,
   getOperationAST,
@@ -17,7 +17,7 @@ import type {
   GraphQLFormattedError,
 } from 'graphql';
 
-interface MammothOptions<TContext> {
+interface MammothOptions<TContext extends MammothContext> {
   schema: GraphQLSchema;
   context: ({ req, res }: { req: Request; res: Response }) => TContext;
   pretty?: boolean;
@@ -25,7 +25,14 @@ interface MammothOptions<TContext> {
   validationRules?: ValidationRule[];
 }
 
-export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
+interface MammothContext {
+  req: Request;
+  res: Response;
+}
+
+export function mammothGraphql<TContext extends MammothContext>(
+  options: MammothOptions<TContext>,
+) {
   const {
     schema,
     pretty = false,
@@ -115,11 +122,7 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
       const result = (await execute({
         schema,
         document: documentAST,
-        contextValue: {
-          req,
-          res,
-          ...options.context({ req, res }),
-        },
+        contextValue: options.context({ req, res }),
         variableValues: variables,
         operationName,
       })) as FormattedExecutionResult;
@@ -136,6 +139,7 @@ export function mammothGraphql<TContext>(options: MammothOptions<TContext>) {
       }
 
       const payload = pretty ? JSON.stringify(result, null, 2) : result;
+
       res.status(200).json(payload);
     } catch (error: unknown) {
       const executionError =
