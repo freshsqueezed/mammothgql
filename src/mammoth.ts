@@ -239,17 +239,6 @@ export function graphiqlHtml(req: Request, res: Response, cookies: string) {
         wsClient: graphqlWs.createClient({
           url: "${wsUrl}",
         }),
-        fetch: (url, options) => {
-          options = {
-            ...options,
-            credentials: 'include', // Include cookies for same-origin requests
-            headers: {
-              ...options.headers,
-              'Cookie': \`${cookies}\`, // Inject cookies into the headers
-            },
-          };
-          return fetch(url, options);
-        },
       });
 
       const explorerPlugin = GraphiQLPluginExplorer.explorerPlugin();
