@@ -1,3 +1,10 @@
+## [1.0.20](https://github.com/freshsqueezed/mammothgql/compare/v1.0.19...v1.0.20) (2025-01-07)
+
+
+### Bug Fixes
+
+* **mammoth:** fix reference ([646e2c1](https://github.com/freshsqueezed/mammothgql/commit/646e2c1c33146dbad5798c52791776641752502e))
+
 ## [1.0.19](https://github.com/freshsqueezed/mammothgql/compare/v1.0.18...v1.0.19) (2025-01-07)
 
 
