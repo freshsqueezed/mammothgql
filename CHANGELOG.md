@@ -1,3 +1,10 @@
+## [1.0.18](https://github.com/freshsqueezed/mammothgql/compare/v1.0.17...v1.0.18) (2025-01-07)
+
+
+### Bug Fixes
+
+* **graphiql-request:** fix broken renderer ([6c330ec](https://github.com/freshsqueezed/mammothgql/commit/6c330ec74f8e48d2803c6d6bbe4098ceb3b32a31))
+
 ## [1.0.17](https://github.com/freshsqueezed/mammothgql/compare/v1.0.16...v1.0.17) (2025-01-07)
 
 
