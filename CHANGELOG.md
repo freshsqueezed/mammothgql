@@ -1,3 +1,10 @@
+## [1.0.19](https://github.com/freshsqueezed/mammothgql/compare/v1.0.18...v1.0.19) (2025-01-07)
+
+
+### Bug Fixes
+
+* **graphiql-renderer:** implment fix for websocket ([37bda1d](https://github.com/freshsqueezed/mammothgql/commit/37bda1d8fa3f28391e9aabba3864bd14e1d789c4))
+
 ## [1.0.18](https://github.com/freshsqueezed/mammothgql/compare/v1.0.17...v1.0.18) (2025-01-07)
 
 
