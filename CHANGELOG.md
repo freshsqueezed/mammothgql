@@ -1,3 +1,10 @@
+## [1.0.24](https://github.com/freshsqueezed/mammothgql/compare/v1.0.23...v1.0.24) (2025-01-07)
+
+
+### Bug Fixes
+
+* **revert-request:** add new withFilter function ([41e1515](https://github.com/freshsqueezed/mammothgql/commit/41e151528fc16cc666348daed18fff734fdb9362))
+
 ## [1.0.23](https://github.com/freshsqueezed/mammothgql/compare/v1.0.22...v1.0.23) (2025-01-07)
 
 
