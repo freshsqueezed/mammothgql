@@ -17,29 +17,27 @@ import type {
   GraphQLFormattedError,
 } from 'graphql';
 
-interface MammothBaseContext {
+export interface MammothBaseContext {
   req: Request;
   res: Response;
 }
 
-// MammothOptions is now generic, expecting a ServerContext that extends MammothBaseContext
 interface MammothOptions<ServerContext extends MammothBaseContext> {
   schema: GraphQLSchema;
-  context?: (args: MammothBaseContext) => Partial<ServerContext>;
+  context: (args: MammothBaseContext) => Partial<ServerContext>;
   pretty?: boolean;
   graphiql?: boolean;
   validationRules?: ValidationRule[];
 }
 
-export function mammothGraphql<ServerContext extends MammothBaseContext>(
-  options: MammothOptions<ServerContext>,
-) {
+export function mammothGraphql<
+  ServerContext extends MammothBaseContext = MammothBaseContext,
+>(options: MammothOptions<ServerContext>) {
   const {
     schema,
     pretty = false,
     graphiql: showGraphiQL = false,
     validationRules = [],
-    context = () => ({}),
   } = options;
 
   return async (req: Request, res: Response): Promise<void> => {
@@ -120,10 +118,10 @@ export function mammothGraphql<ServerContext extends MammothBaseContext>(
     }
 
     try {
-      const contextValue: ServerContext = {
+      const contextValue = {
         req,
         res,
-        ...context({ req, res }),
+        ...options.context({ req, res }),
       } as ServerContext;
 
       const result = await execute({

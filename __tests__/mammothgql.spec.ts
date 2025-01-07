@@ -1,7 +1,7 @@
 import request from 'supertest';
 import express, { json } from 'express';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { mammothGraphql } from '../src';
+import { MammothBaseContext, mammothGraphql } from '../src';
 
 const testSchema = makeExecutableSchema({
   typeDefs: `#graphql
@@ -22,12 +22,17 @@ describe('mammothGraphql Middleware', () => {
   beforeAll(() => {
     app = express();
     app.use(json());
+
+    interface ServerContext extends MammothBaseContext {
+      user?: any;
+    }
+
     app.use(
       '/graphql',
-      mammothGraphql({
+      mammothGraphql<ServerContext>({
         schema: testSchema,
         graphiql: true,
-        context: ({ req, res }) => ({ req, res }),
+        context: () => ({}),
       }),
     );
   });
