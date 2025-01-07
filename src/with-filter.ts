@@ -1,72 +1,82 @@
-// Define the type for the pubsub object
-interface PubSub {
-  asyncIterator: (trigger: string) => AsyncIterator<any>;
-}
+import { GraphQLResolveInfo } from 'graphql';
 
-// Define the filter function type
-export type FilterFn<TSource = any, TArgs = any, TContext = any> = (
+export type FilterFn<TSource, TArgs, TContext> = (
   rootValue: TSource,
   args: TArgs,
   context: TContext,
-  info: any,
+  info: GraphQLResolveInfo, // More specific typing for the info object
 ) => boolean | Promise<boolean>;
 
-// Define the resolver function type
-export type ResolverFn<TSource = any, TArgs = any, TContext = any> = (
+export type ResolverFn<TSource, TArgs, TContext> = (
   rootValue: TSource,
   args: TArgs,
   context: TContext,
-  info: any,
+  info: GraphQLResolveInfo,
 ) => AsyncIterator<any> | Promise<AsyncIterator<any>>;
 
-// Define the iterable resolver function type
-export type IterableResolverFn<TSource = any, TArgs = any, TContext = any> = (
+export type IterableResolverFn<TSource, TArgs, TContext> = (
   rootValue: TSource,
   args: TArgs,
   context: TContext,
-  info: any,
+  info: GraphQLResolveInfo,
 ) => AsyncIterableIterator<any> | Promise<AsyncIterableIterator<any>>;
 
-// The withFilter function type definition, expecting a context with pubsub
-export type WithFilter<TSource = any, TArgs = any, TContext = any> = (
+interface IterallAsyncIterator<T> extends AsyncIterableIterator<T> {
+  [Symbol.asyncIterator](): IterallAsyncIterator<T>;
+}
+
+export type WithFilter<TSource, TArgs, TContext> = (
   asyncIteratorFn: ResolverFn<TSource, TArgs, TContext>,
   filterFn: FilterFn<TSource, TArgs, TContext>,
 ) => IterableResolverFn<TSource, TArgs, TContext>;
 
-// Modify the withFilter function
-export function withFilter<
-  TSource = any,
-  TArgs = any,
-  TContext = { pubsub: PubSub },
->(
+export function withFilter<TSource, TArgs, TContext>(
   asyncIteratorFn: ResolverFn<TSource, TArgs, TContext>,
   filterFn: FilterFn<TSource, TArgs, TContext>,
 ): IterableResolverFn<TSource, TArgs, TContext> {
   return async (
-    rootValue,
-    args,
-    context: TContext, // Context will include pubsub here
-    info,
-  ): Promise<AsyncIterableIterator<any>> => {
-    // Expect the context to have the pubsub property
+    rootValue: TSource,
+    args: TArgs,
+    context: TContext,
+    info: GraphQLResolveInfo,
+  ): Promise<IterallAsyncIterator<any>> => {
     const asyncIterator = await asyncIteratorFn(rootValue, args, context, info);
 
-    const next = async (): Promise<IteratorResult<any>> => {
-      const payload = await asyncIterator.next();
-      if (payload.done) return payload;
+    const getNextPromise = () => {
+      return new Promise<IteratorResult<any>>((resolve, reject) => {
+        const inner = () => {
+          asyncIterator
+            .next()
+            .then((payload) => {
+              if (payload.done === true) {
+                resolve(payload);
+                return;
+              }
+              // Handle filterFn and ensure errors are ignored
+              Promise.resolve(filterFn(payload.value, args, context, info))
+                .catch(() => false) // Ignore errors from the filter function
+                .then((filterResult) => {
+                  if (filterResult === true) {
+                    resolve(payload);
+                    return;
+                  }
+                  // Recursively skip to the next item if the filter fails
+                  inner();
+                });
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        };
 
-      const filterResult = await filterFn(payload.value, args, context, info);
-      if (filterResult) {
-        return payload;
-      }
-
-      // Recursively skip and try again with the next item
-      return next();
+        inner();
+      });
     };
 
-    // Return the AsyncIterableIterator directly
-    const iterable: AsyncIterableIterator<any> = {
-      next,
+    const asyncIterator2: IterallAsyncIterator<any> = {
+      next() {
+        return getNextPromise();
+      },
       return() {
         return asyncIterator.return
           ? asyncIterator.return()
@@ -82,6 +92,6 @@ export function withFilter<
       },
     };
 
-    return iterable;
+    return asyncIterator2;
   };
 }
