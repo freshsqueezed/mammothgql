@@ -1,3 +1,10 @@
+## [1.0.22](https://github.com/freshsqueezed/mammothgql/compare/v1.0.21...v1.0.22) (2025-01-07)
+
+
+### Bug Fixes
+
+* **request:** super important that a new version releases ([4759bc9](https://github.com/freshsqueezed/mammothgql/commit/4759bc9b0147a3d45f05740027c2fb92824b1b66))
+
 ## [1.0.21](https://github.com/freshsqueezed/mammothgql/compare/v1.0.20...v1.0.21) (2025-01-07)
 
 
