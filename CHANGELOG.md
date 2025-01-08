@@ -1,3 +1,10 @@
+## [1.0.25](https://github.com/freshsqueezed/mammothgql/compare/v1.0.24...v1.0.25) (2025-01-08)
+
+
+### Bug Fixes
+
+* **filter:** add new succint syntax for filter ([72f5bae](https://github.com/freshsqueezed/mammothgql/commit/72f5bae1dc1046d8e154bbc6e9d7af2063292fdb))
+
 ## [1.0.24](https://github.com/freshsqueezed/mammothgql/compare/v1.0.23...v1.0.24) (2025-01-07)
 
 
