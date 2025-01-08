@@ -4,7 +4,7 @@ export type FilterFn<TSource, TArgs, TContext> = (
   rootValue: TSource,
   args: TArgs,
   context: TContext,
-  info: GraphQLResolveInfo, // More specific typing for the info object
+  info: GraphQLResolveInfo,
 ) => boolean | Promise<boolean>;
 
 export type ResolverFn<TSource, TArgs, TContext> = (
@@ -42,40 +42,21 @@ export function withFilter<TSource, TArgs, TContext>(
   ): Promise<IterallAsyncIterator<any>> => {
     const asyncIterator = await asyncIteratorFn(rootValue, args, context, info);
 
-    const getNextPromise = () => {
-      return new Promise<IteratorResult<any>>((resolve, reject) => {
-        const inner = () => {
-          asyncIterator
-            .next()
-            .then((payload) => {
-              if (payload.done === true) {
-                resolve(payload);
-                return;
-              }
-              // Handle filterFn and ensure errors are ignored
-              Promise.resolve(filterFn(payload.value, args, context, info))
-                .catch(() => false) // Ignore errors from the filter function
-                .then((filterResult) => {
-                  if (filterResult === true) {
-                    resolve(payload);
-                    return;
-                  }
-                  // Recursively skip to the next item if the filter fails
-                  inner();
-                });
-            })
-            .catch((err) => {
-              reject(err);
-            });
-        };
+    const getNextItem = async (): Promise<IteratorResult<any>> => {
+      const { value, done } = await asyncIterator.next();
 
-        inner();
-      });
+      if (done) {
+        return { done, value: undefined };
+      }
+
+      const shouldInclude = await filterFn(value, args, context, info);
+
+      return shouldInclude ? { done: false, value } : getNextItem();
     };
 
-    const asyncIterator2: IterallAsyncIterator<any> = {
+    const filteredIterator: IterallAsyncIterator<any> = {
       next() {
-        return getNextPromise();
+        return getNextItem();
       },
       return() {
         return asyncIterator.return
@@ -92,6 +73,6 @@ export function withFilter<TSource, TArgs, TContext>(
       },
     };
 
-    return asyncIterator2;
+    return filteredIterator;
   };
 }
