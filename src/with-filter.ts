@@ -1,20 +1,20 @@
 import { GraphQLResolveInfo } from 'graphql';
 
-export type FilterFn<TSource, TArgs, TContext> = (
+type FilterFn<TSource, TArgs, TContext> = (
   rootValue: TSource,
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo,
 ) => boolean | Promise<boolean>;
 
-export type ResolverFn<TSource, TArgs, TContext> = (
+type ResolverFn<TSource, TArgs, TContext> = (
   rootValue: TSource,
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo,
 ) => AsyncIterator<any> | Promise<AsyncIterator<any>>;
 
-export type IterableResolverFn<TSource, TArgs, TContext> = (
+type IterableResolverFn<TSource, TArgs, TContext> = (
   rootValue: TSource,
   args: TArgs,
   context: TContext,
@@ -24,11 +24,6 @@ export type IterableResolverFn<TSource, TArgs, TContext> = (
 interface IterallAsyncIterator<T> extends AsyncIterableIterator<T> {
   [Symbol.asyncIterator](): IterallAsyncIterator<T>;
 }
-
-export type WithFilter<TSource, TArgs, TContext> = (
-  asyncIteratorFn: ResolverFn<TSource, TArgs, TContext>,
-  filterFn: FilterFn<TSource, TArgs, TContext>,
-) => IterableResolverFn<TSource, TArgs, TContext>;
 
 export function withFilter<TSource, TArgs, TContext>(
   asyncIteratorFn: ResolverFn<TSource, TArgs, TContext>,
