@@ -16,17 +16,16 @@ const testSchema = makeExecutableSchema({
   },
 });
 
+interface ServerContext extends MammothBaseContext {
+  userId?: string;
+}
+
 describe('mammothGraphql Middleware', () => {
   let app: express.Express;
 
   beforeEach(() => {
     app = express();
     app.use(json());
-
-    interface ServerContext extends MammothBaseContext {
-      userId?: string;
-    }
-
     app.use(
       '/graphql',
       mammothGraphql<ServerContext>({
