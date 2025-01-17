@@ -24,7 +24,7 @@ export interface MammothBaseContext {
 
 interface MammothOptions<ServerContext extends MammothBaseContext> {
   schema: GraphQLSchema;
-  context: (args: MammothBaseContext) => Partial<ServerContext>;
+  context?: (args: MammothBaseContext) => Partial<ServerContext>;
   pretty?: boolean;
   graphiql?: boolean;
   validationRules?: ValidationRule[];
@@ -36,7 +36,7 @@ export function mammothGraphql<
   const {
     schema,
     pretty = false,
-    graphiql: showGraphiQL = false,
+    graphiql: showGraphiQL = true,
     validationRules = [],
   } = options;
 
@@ -121,7 +121,7 @@ export function mammothGraphql<
       const contextValue = {
         req,
         res,
-        ...options.context({ req, res }),
+        ...(options.context ? options.context({ req, res }) : {}),
       } as ServerContext;
 
       const result = await execute({
