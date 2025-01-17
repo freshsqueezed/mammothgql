@@ -1,3 +1,10 @@
+## [1.0.26](https://github.com/freshsqueezed/mammothgql/compare/v1.0.25...v1.0.26) (2025-01-17)
+
+
+### Bug Fixes
+
+* **context:** update context for optional ([0425aef](https://github.com/freshsqueezed/mammothgql/commit/0425aef1c8affd1deb9f90c55ae360bbe415f2ad))
+
 ## [1.0.25](https://github.com/freshsqueezed/mammothgql/compare/v1.0.24...v1.0.25) (2025-01-08)
 
 
